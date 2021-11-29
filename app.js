@@ -30,7 +30,10 @@ app.set('view engine','pug')
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(express.json())
+
+// Set Public folder
+app.use(express.static(path.join(__dirname,'public')))
 
 // Bring in the Models
 const Article = require('./models/article');
@@ -72,6 +75,8 @@ app.post('/articles/add',function (req,res) {
         res.redirect('/')
     })
 })
+
+// 
 
 const PORT = process.env.PORT || 5000
 

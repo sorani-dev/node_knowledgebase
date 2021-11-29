@@ -1,1 +1,6 @@
 node_modules
+# !bower_components/bootstrap/dist/*
+/public/bower_components/*
+!/public/bower_components/bootstrap/dist/js/bootstrap.bundle.js
+.ionide/symbolCache.db
+.vscode/*

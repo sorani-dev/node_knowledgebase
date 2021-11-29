@@ -5,10 +5,30 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Knowledgebase - #{title}
+        link(rel="stylesheet", href="/bower_components/bootstrap/dist/css/bootstrap.min.css")
     body
-        block content
-        br
-        br
-        footer
-            p Copyright &copy; 2021 Simon Cateau 
-                a(href="https://github.com/sorani-dev") GitHub 
+        nav.navbar.navbar-expand-md.navbar-dark.bg-dark.mb-4
+            .container-fluid
+                a.navbar-brand(href='/') Knowledgebase
+                button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarCollapse' aria-controls='navbarCollapse' aria-expanded='false' aria-label='Toggle navigation')
+                    span.navbar-toggler-icon
+                #navbarCollapse.collapse.navbar-collapse
+                    ul.navbar-nav.me-auto.mb-2.mb-md-0
+                        li.nav-item
+                        a.nav-link.active(aria-current='page' href='/') Home
+                        li.nav-item
+                        a.nav-link(href='/articles/add') Add Article
+                        //- li.nav-item
+                        //- a.nav-link.disabled Disabled
+                    //- form.d-flex
+                    //-     input.form-control.me-2(type='search' placeholder='Search' aria-label='Search')
+                    //-     button.btn.btn-outline-success(type='submit') Search
+
+        .container
+            block content
+            br
+            br
+            footer
+                p.text-center Copyright &copy; 2021 Simon Cateau 
+                    a(href="https://github.com/sorani-dev") GitHub
+        script(src="/bower_components/bootstrap/dist/js/bootstrap.bundle.js")         
