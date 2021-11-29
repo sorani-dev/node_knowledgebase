@@ -1,15 +1,16 @@
 extends layout
 
 block content
-        h1 #{title}
-        form(action="/articles/add", method="post") 
-                .form-group 
-                        label(for="title") Title 
-                        input.form-control#title(name="title", type="text")
-                .form-group 
-                        label(for="author") Author 
-                        input.form-control#author(name="author", type="text")
-                .form-group 
-                        label(for="body") Content 
-                        textarea.form-control#body(name="body", type="text")
-                button.btn.btn-primary(type="submit") Submit
+	h1 #{title}
+	form(action="/articles/add", method="post") 
+	.mb-3 
+		label.form-label(for="title") Title 
+		input.form-control#title(name="title", type="text")
+	.mb-3 
+		label.form-label(for="author") Author 
+		input.form-control#author(name="author", type="text")
+	.mb-3 
+		label.form-label(for="body") Content 
+		textarea.form-control#body(name="body")
+	br
+	button.btn.btn-primary(type="submit") Submit
