@@ -1,0 +1,15 @@
+{
+  "name": "node_knowledgebase",
+  "version": "1.0.0",
+  "description": "Simple knowledgebase app",
+  "main": "app.js",
+  "author": "sorani-dev <sorani.dev@outlook.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
