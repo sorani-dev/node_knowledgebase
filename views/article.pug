@@ -1,6 +1,10 @@
+extends layout
+
 block content
     h1= article.title
     h2.h5 Written by #{article.author}
     p= article.body 
     hr
-    a.btn.btn-primary(href=`/article/edit/${article._id}`) Edit 
+    .btn-group
+        a.btn.btn-primary.me-3(href=`/article/edit/${article._id}`, role="button") Edit 
+        a.btn.btn-danger.delete-article(href=`/article/delete/`, data-id=article._id, role="button") Delete 

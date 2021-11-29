@@ -123,6 +123,22 @@ app.post('/article/edit/:id',(req,res) => {
     })
 })
 
+// Delete an Article
+app.delete('/article/:id',(req,res) => {
+    Article.findById(req.params.id,{},function (err,a) {
+        console.log(a);
+        Article.deleteOne({ _id: req.params.id },{},function (err) {
+            if (err) {
+                console.log(err)
+                res.json({ message: err,success: false }).status(400)
+                return
+            }
+            res.send({ message: 'Success',success: true }).status(200)
+
+        })
+    })
+
+})
 
 const PORT = process.env.PORT || 5000
 
