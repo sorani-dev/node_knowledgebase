@@ -24,33 +24,23 @@ const app = express()
 app.set('views',path.join(__dirname,'views'))
 app.set('view engine','pug')
 
+// Bring in the Models
+const Article = require('./models/article');
+
 // Routes
 // Home Route
 app.get('/',function (req,res) {
-    const articles = [
-        {
-            id: 1,
-            title: 'Article One',
-            author: 'Sorani',
-            body: 'This is article one'
-        },
-        {
-            id: 2,
-            title: 'Article Two',
-            author: 'John Doe',
-            body: 'This is article two'
-        },
-        {
-            id: 3,
-            title: 'Aticle Three',
-            author: 'Riku Nyaruko',
-            body: 'This is article three'
-        },
-    ]
-    res.render('index',{
-        title: 'Articles',
-        articles
-    });
+    Article.find({},(err,articles) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        res.render('index',{
+            title: 'Articles',
+            articles
+        });
+    }
+    )
 })
 
 // Add Article Route
