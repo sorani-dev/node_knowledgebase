@@ -1,7 +1,7 @@
 const express = require('express')
 
-// Create app
-app = express()
+// Init app
+const app = express()
 
 
 // Routes
