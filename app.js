@@ -11,8 +11,29 @@ app.set('view engine','pug')
 // Routes
 // Home Route
 app.get('/',function (req,res) {
+    const articles = [
+        {
+            id: 1,
+            title: 'Article One',
+            author: 'Sorani',
+            body: 'This is article one'
+        },
+        {
+            id: 2,
+            title: 'Article Two',
+            author: 'John Doe',
+            body: 'This is article two'
+        },
+        {
+            id: 3,
+            title: 'Aticle Three',
+            author: 'Riku Nyaruko',
+            body: 'This is article three'
+        },
+    ]
     res.render('index',{
-        title: 'Articles'
+        title: 'Articles',
+        articles
     });
 })
 
