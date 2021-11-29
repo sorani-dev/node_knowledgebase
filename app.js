@@ -37,6 +37,7 @@ app.use(express.static(path.join(__dirname,'public')))
 
 // Bring in the Models
 const Article = require('./models/article');
+const { title } = require('process');
 
 // Routes
 // Home Route
@@ -76,7 +77,15 @@ app.post('/articles/add',function (req,res) {
     })
 })
 
-// 
+// Add a Single Article
+app.use('/article/:id',function (req,res) {
+    Article.findById(req.body.id,function (err,article) {
+        res.render('article',{
+            title: article.title,
+            article
+        })
+    })
+})
 
 const PORT = process.env.PORT || 5000
 
