@@ -2,6 +2,9 @@ const path = require('path')
 
 const bodyParser = require('body-parser')
 const express = require('express')
+const session = require('express-session');
+const flash = require('connect-flash')
+const { body,validationResult } = require('express-validator');
 const mongoose = require('mongoose')
 
 // Connect to the database
@@ -31,6 +34,29 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(express.json())
+
+// Express Session Middleware
+app.set('trust proxy',1) // trust first proxy
+const sess = {
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}
+if (app.get('env') === 'production') {
+    app.set('trust proxy',1) // trust first proxy
+    sess.cookie.secure = true // serve secure cookies
+}
+app.use(session(sess))
+
+// Express Messages Middleware
+app.use(require('connect-flash')());
+app.use(function (req,res,next) {
+    res.locals.messages = require('express-messages')(req,res);
+    next();
+});
+
+
 
 // Set Public folder
 app.use(express.static(path.join(__dirname,'public')))
@@ -62,19 +88,48 @@ app.get('/articles/add',function (req,res) {
 })
 
 // Add Article Submit POST Route
-app.post('/articles/add',function (req,res) {
-    const article = new Article()
-    article.title = req.body.title
-    article.author = req.body.author
-    article.body = req.body.body
-    article.save(function (err) {
-        if (err) {
-            console.error(err)
-            return
+app.post('/articles/add',
+    body('title').notEmpty().withMessage('Title is required'),
+    body('author').notEmpty().withMessage('Author is required'),
+    body('body').notEmpty().withMessage('Content is required'),
+    function (req,res) {
+
+        const errors = validationResult(req)
+        // console.log(errors)
+        if (!errors.isEmpty()) {
+            return res.render('add_article',{
+                title: 'Add Article',
+                errors: errors.array(),
+                article: {
+                    title: req.body.title,
+                    author: req.body.author,
+                    body: req.body.body,
+                }
+            })
         }
-        res.redirect('/')
+
+        // Create an Article
+        const article = new Article()
+        article.title = req.body.title
+        article.author = req.body.author
+        article.body = req.body.body
+        article.save(function (err) {
+            if (err) {
+                console.error(err)
+                req.flash('An error occured. Could not add the article, try again later.')
+                return res.render('add_article',{
+                    title: 'Add Article',
+                    article: {
+                        title: req.body.title,
+                        author: req.body.author,
+                        body: req.body.body,
+                    }
+                })
+            }
+            req.flash('success','Article Added')
+            res.redirect('/')
+        })
     })
-})
 
 // Get a Single Article
 app.get('/article/:id',function (req,res) {
@@ -107,21 +162,50 @@ app.get('/article/edit/:id',function (req,res) {
 })
 
 // Edit an Article (POST)
-app.post('/article/edit/:id',(req,res) => {
-    const article = {}
-    article.title = req.body.title
-    article.author = req.body.author
-    article.body = req.body.body
-
-    Article.findOneAndUpdate(req.params.id,article,{ returnDocument: true,new: true },function (err) {
-        if (err) {
-            console.error(error)
-            res.status(400).send('Could not update the article')
-            return
+app.post('/article/edit/:id',
+    body('title').notEmpty().withMessage('Title is required'),
+    body('author').notEmpty().withMessage('Author is required'),
+    body('body').notEmpty().withMessage('Content is required'),
+    (req,res) => {
+        const errors = validationResult(req)
+        console.log(errors)
+        if (!errors.isEmpty()) {
+            return res.render('edit_article',{
+                title: 'Edit Article',
+                errors: errors.array(),
+                article: {
+                    title: req.body.title,
+                    author: req.body.author,
+                    body: req.body.body,
+                }
+            })
         }
-        res.redirect('/')
+
+        const article = {}
+        article.title = req.body.title
+        article.author = req.body.author
+        article.body = req.body.body
+
+        Article.findOneAndUpdate(req.params.id,article,{ returnDocument: true,new: true },function (err) {
+            if (err) {
+                console.error(error)
+                req.flash('danger','Could not update the article')
+
+                // res.status(400).send('Could not update the article')
+                return res.render('edit_article',{
+                    title: 'Edit Article',
+                    article: {
+                        title: req.body.title,
+                        author: req.body.author,
+                        body: req.body.body,
+                    }
+                })
+            }
+            req.flash('success','Article Updated')
+
+            res.redirect('/')
+        })
     })
-})
 
 // Delete an Article
 app.delete('/article/:id',(req,res) => {

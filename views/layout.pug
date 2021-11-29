@@ -26,6 +26,10 @@ html(lang="en")
                     //-     button.btn.btn-outline-success(type='submit') Search
 
         .container
+            != messages('messages', locals)
+            if errors
+                each error, i in errors
+                    div(class="alert alert-danger")= error.msg
             block content
             br
             br
