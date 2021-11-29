@@ -81,12 +81,45 @@ app.get('/article/:id',function (req,res) {
     Article.findById(req.params.id,function (err,article) {
         if (err) {
             console.error(err)
+            res.status(404).send('Article not found')
             return
         }
         res.render('article',{
             title: article.title,
             article
         })
+    })
+})
+
+// Edit an article (GET)
+app.get('/article/edit/:id',function (req,res) {
+    Article.findById(req.params.id,function (err,article) {
+        if (err) {
+            console.error(err)
+            res.status(404).send('Article not found')
+            return
+        }
+        res.render('edit_article',{
+            title: 'Edit Article',
+            article
+        })
+    })
+})
+
+// Edit an Article (POST)
+app.post('/article/edit/:id',(req,res) => {
+    const article = {}
+    article.title = req.body.title
+    article.author = req.body.author
+    article.body = req.body.body
+
+    Article.findOneAndUpdate(req.params.id,article,{ returnDocument: true,new: true },function (err) {
+        if (err) {
+            console.error(error)
+            res.status(400).send('Could not update the article')
+            return
+        }
+        res.redirect('/')
     })
 })
 
