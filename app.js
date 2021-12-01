@@ -61,26 +61,12 @@ app.use(function (req,res,next) {
 // Set Public folder
 app.use(express.static(path.join(__dirname,'public')))
 
-// Bring in the Models
-const Article = require('./models/article');
+// // Bring in the Models
+// const Article = require('./models/article');
 
 // Routes
-// Home Route
-app.get('/',function (req,res) {
-    Article.find({},(err,articles) => {
-        if (err) {
-            console.error(err)
-            return
-        }
-        res.render('index',{
-            title: 'Articles',
-            articles
-        });
-    }
-    )
-})
-
 // Route files
+app.use('/',require('./routes/index'))
 app.use('/articles',require('./routes/articles'))
 
 const PORT = process.env.PORT || 5000
