@@ -1,0 +1,22 @@
+extend layout 
+
+block content 
+    h1 Register
+    form(action="/users/register", method="post") 
+        .mb-3 
+            label.form-label(for="name") Name 
+            input.form-control#name(name="name", type="text", value=name)
+        .mb-3 
+            label.form-label(for="email") Email 
+            input.form-control#email(name="email", type="email", value=email)
+        .mb-3 
+            label.form-label(for="username") Username 
+            input.form-control#username(name="username", type="text", value=username)
+        .mb-3 
+            label.form-label(for="password") Password 
+            input.form-control#password(name="password", type="password")
+        .mb-3 
+            label.form-label(for="password2") Confirm Password 
+            input.form-control#password2(name="password2", type="password", autocomplete="new-password")
+        br
+        button.btn.btn-primary(type="submit") Submit

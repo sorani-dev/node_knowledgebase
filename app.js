@@ -68,6 +68,7 @@ app.use(express.static(path.join(__dirname,'public')))
 // Route files
 app.use('/',require('./routes/index'))
 app.use('/articles',require('./routes/articles'))
+app.use('/users',require('./routes/users'))
 
 const PORT = process.env.PORT || 5000
 
