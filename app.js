@@ -2,6 +2,7 @@ const path = require('path')
 
 const bodyParser = require('body-parser')
 const express = require('express')
+const passport = require('passport')
 const session = require('express-session');
 const flash = require('connect-flash')
 const { body,validationResult } = require('express-validator');
@@ -63,10 +64,21 @@ app.use(function (req,res,next) {
 // Set Public folder
 app.use(express.static(path.join(__dirname,'public')))
 
+// Passport config
+require('./config/passport')(passport)
+// Passport middleware
+app.use(passport.initialize())
+app.use(passport.session())
+
 // // Bring in the Models
 // const Article = require('./models/article');
 
 // Routes
+// Populate user on all routes if available
+app.get('*',(req,res,next) => {
+    res.locals.user = req.user || null
+    next()
+})
 // Route files
 app.use('/',require('./routes/index'))
 app.use('/articles',require('./routes/articles'))

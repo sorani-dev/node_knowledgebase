@@ -6,6 +6,7 @@ const router = Router()
 
 // Bring in the User Model
 const User = require('../models/user')
+const passport = require('passport')
 
 // Register Form (GET)
 router.get('/register',(req,res) => {
@@ -69,6 +70,15 @@ router.post('/register'
 // Login Form (GET)
 router.get('/login',(req,res) => {
     return res.render('login')
+})
+
+// Login Process (POST)
+router.post('/login',(req,res,next) => {
+    passport.authenticate('local',{
+        successRedirect: '/'
+        ,failureRedirect: '/users/login'
+        ,failureFlash: true,
+    })(req,res,next)
 })
 
 module.exports = router
