@@ -20,10 +20,15 @@ html(lang="en")
                         li.nav-item
                             a.nav-link(href='/articles/add') Add Article
                     ul.navbar-nav.ms-auto
-                        li.nav-item
-                            a.nav-link(href='/users/login') Login
-                        li.nav-item
-                            a.nav-link(href='/users/register') Register
+                        if user
+                            li.nav-item
+                                form.form-inline(action="/users/logout", method="post")
+                                    button.btn.btn-outline-secondary.text-white(type="submit") Logout
+                        else
+                            li.nav-item
+                                a.nav-link(href='/users/login') Login
+                            li.nav-item
+                                a.nav-link(href='/users/register') Register
                         //- li.nav-item
                         //- a.nav-link.disabled Disabled
                     //- form.d-flex
