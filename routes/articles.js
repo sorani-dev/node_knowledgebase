@@ -5,6 +5,8 @@ const router = Router()
 
 // Bring in the Article Model
 const Article = require('../models/article')
+// User Model
+const User = require('../models/user')
 
 // Add Article Route
 router.get('/add',function (req,res) {
@@ -16,7 +18,7 @@ router.get('/add',function (req,res) {
 // Add Article Submit POST Route
 router.post('/add',
     body('title').notEmpty().withMessage('Title is required'),
-    body('author').notEmpty().withMessage('Author is required'),
+    // body('author').notEmpty().withMessage('Author is required'),
     body('body').notEmpty().withMessage('Content is required'),
     function (req,res) {
 
@@ -28,7 +30,7 @@ router.post('/add',
                 errors: errors.array(),
                 article: {
                     title: req.body.title,
-                    author: req.body.author,
+                    // author: req.body.author,
                     body: req.body.body,
                 }
             })
@@ -37,7 +39,7 @@ router.post('/add',
         // Create an Article
         const article = new Article()
         article.title = req.body.title
-        article.author = req.body.author
+        article.author = req.user._id
         article.body = req.body.body
         article.save(function (err) {
             if (err) {
@@ -47,7 +49,7 @@ router.post('/add',
                     title: 'Add Article',
                     article: {
                         title: req.body.title,
-                        author: req.body.author,
+                        // author: req.body.author,
                         body: req.body.body,
                     }
                 })
@@ -138,17 +140,23 @@ router.delete('/:id',(req,res) => {
 
 // Get a Single Article
 router.get('/:id',function (req,res) {
-    Article.findById(req.params.id,function (err,article) {
-        if (err) {
+    Article.findById(req.params.id)
+        .then(article => {
+            User.findById(article.author).then(author => {
+                res.render('article',{
+                    title: article.title,
+                    author: author.name,
+                    article
+                })
+            }).catch(err => {
+                console.error(err)
+                res.status(404).send('Article not found')
+                return
+            })
+        }).catch(err => {
             console.error(err)
             res.status(404).send('Article not found')
-            return
-        }
-        res.render('article',{
-            title: article.title,
-            article
         })
-    })
 })
 
 module.exports = router
