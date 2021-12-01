@@ -5,6 +5,7 @@ block content
     h2.h5 Written by #{author}
     p= article.body 
     hr
-    .btn-group
-        a.btn.btn-primary.me-3(href=`/articles/edit/${article._id}`, role="button") Edit 
-        a.btn.btn-danger.delete-article(href=`/articles/delete/`, data-id=article._id, role="button") Delete 
+    if user && user.id == article.author
+        .btn-group
+            a.btn.btn-primary.me-3(href=`/articles/edit/${article._id}`, role="button") Edit 
+            a.btn.btn-danger.delete-article(href=`/articles/delete/`, data-id=article._id, role="button") Delete 

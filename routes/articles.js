@@ -9,7 +9,7 @@ const Article = require('../models/article')
 const User = require('../models/user')
 
 // Add Article Route
-router.get('/add',function (req,res) {
+router.get('/add',ensureAuthenticated,function (req,res) {
     res.render('add_article',{
         title: 'Add Article'
     })
@@ -17,6 +17,7 @@ router.get('/add',function (req,res) {
 
 // Add Article Submit POST Route
 router.post('/add',
+    ensureAuthenticated,
     body('title').notEmpty().withMessage('Title is required'),
     // body('author').notEmpty().withMessage('Author is required'),
     body('body').notEmpty().withMessage('Content is required'),
@@ -60,8 +61,13 @@ router.post('/add',
     })
 
 // Edit an article (GET)
-router.get('/edit/:id',function (req,res) {
+router.get('/edit/:id',ensureAuthenticated,function (req,res) {
     Article.findById(req.params.id,function (err,article) {
+        if (article.author != req.user._id) {
+            req.flash('danger','Not Authorized')
+            return res.status(403).redirect('/')
+        }
+
         if (err) {
             console.error(err)
             res.status(404).send('Article not found')
@@ -76,6 +82,7 @@ router.get('/edit/:id',function (req,res) {
 
 // Edit an Article (POST)
 router.post('/edit/:id',
+    ensureAuthenticated,
     body('title').notEmpty().withMessage('Title is required'),
     body('author').notEmpty().withMessage('Author is required'),
     body('body').notEmpty().withMessage('Content is required'),
@@ -100,6 +107,11 @@ router.post('/edit/:id',
         article.body = req.body.body
 
         Article.findOneAndUpdate(req.params.id,article,{ returnDocument: true,new: true },function (err) {
+            if (article.author != req.user._id) {
+                req.flash('danger','Not Authorized')
+                return res.status(403).redirect('/')
+            }
+
             if (err) {
                 console.error(error)
                 req.flash('danger','Could not update the article')
@@ -121,8 +133,16 @@ router.post('/edit/:id',
     })
 
 // Delete an Article
-router.delete('/:id',(req,res) => {
+router.delete('/:id',ensureAuthenticated,(req,res) => {
+    if (!req.user._id) {
+        return res.status(500).send()
+    }
+
     Article.findById(req.params.id,{},function (err,a) {
+        if (a.author != req.user._id) {
+            req.flash('danger','Not Authorized')
+            return res.status(403).redirect('/')
+        }
         // console.log(a);
         Article.deleteOne({ _id: req.params.id },{},function (err) {
             if (err) {
@@ -158,5 +178,14 @@ router.get('/:id',function (req,res) {
             res.status(404).send('Article not found')
         })
 })
+
+// Access Control Middleware
+function ensureAuthenticated(req,res,next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+    req.flash('danger','Please login')
+    res.redirect('/users/login')
+}
 
 module.exports = router
