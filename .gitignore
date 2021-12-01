@@ -4,3 +4,5 @@ node_modules
 !/public/bower_components/bootstrap/dist/js/bootstrap.bundle.js
 .ionide/symbolCache.db
 .vscode/*
+data
+.env

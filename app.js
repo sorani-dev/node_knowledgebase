@@ -7,8 +7,12 @@ const flash = require('connect-flash')
 const { body,validationResult } = require('express-validator');
 const mongoose = require('mongoose')
 
+const config = require('./config/database')
+
+console.log(config,process.env);
+
 // Connect to the database
-mongoose.connect('mongodb://localhost/nodekb');
+mongoose.connect(config.database);
 const db = mongoose.connection;
 
 // Check connection
