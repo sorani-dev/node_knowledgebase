@@ -30,7 +30,7 @@ app.set('view engine','pug')
 
 // Body Parser Middleware
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(express.json())

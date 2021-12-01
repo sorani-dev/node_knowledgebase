@@ -121,7 +121,7 @@ router.post('/edit/:id',
 // Delete an Article
 router.delete('/:id',(req,res) => {
     Article.findById(req.params.id,{},function (err,a) {
-        console.log(a);
+        // console.log(a);
         Article.deleteOne({ _id: req.params.id },{},function (err) {
             if (err) {
                 console.log(err)
