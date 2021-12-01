@@ -69,7 +69,7 @@ router.post('/register'
 
 // Login Form (GET)
 router.get('/login',(req,res) => {
-    return res.render('login')
+    return res.render('login',{ username: req.body.username })
 })
 
 // Login Process (POST)
