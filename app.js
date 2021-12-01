@@ -84,6 +84,23 @@ app.use('/',require('./routes/index'))
 app.use('/articles',require('./routes/articles'))
 app.use('/users',require('./routes/users'))
 
+// Error handlers
+app.use(function (req,res,next) {
+    res.status(404);
+
+    res.format({
+        html: function () {
+            res.render('errors/404',{ url: req.url })
+        },
+        json: function () {
+            res.json({ error: 'Not found' })
+        },
+        default: function () {
+            res.type('txt').send('Not found')
+        }
+    })
+})
+
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT,() => console.log(`Server started on port ${PORT}`))

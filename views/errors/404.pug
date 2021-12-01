@@ -1,0 +1,14 @@
+extend ../layout 
+
+block content 
+    if !message_title && message_title != ''
+        h1  An error occurred!
+    else
+        h1= message_title
+    if url
+        h2 Cannot find #{url}
+    else if message
+        h2 #{message}
+        p #{message_details}
+    else
+        h2 The page you searched for could not be found...
