@@ -70,6 +70,22 @@ require('./config/passport')(passport)
 app.use(passport.initialize())
 app.use(passport.session())
 
+// Csrf
+const csrf = require('csurf');
+const csurf = require('csurf');
+const csrfProtection = csrf({ cookie: false,ignoreMethods: ['HEAD','OPTIONS'] })
+
+app.use((req,res,next) => {
+    if (req.isAuthenticated()) {
+        console.info('is auth csrf')
+        app.use(csrfProtection)
+        // csrfProtection(req,res,next)
+        // csrf
+        // app.locals.csrf = req.csrfToken()
+        // return next()
+    }
+    return next()
+})
 // // Bring in the Models
 // const Article = require('./models/article');
 
@@ -99,6 +115,13 @@ app.use(function (req,res,next) {
             res.type('txt').send('Not found')
         }
     })
+})
+app.use(function (err,req,res,next) {
+    if (err.code !== 'EBADCSRFTOKEN') return next(err)
+
+    // handle CSRF token errors here
+    res.status(403)
+    res.send('form tampered with')
 })
 
 const PORT = process.env.PORT || 5000

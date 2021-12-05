@@ -4,9 +4,14 @@ const bcrypt = require('bcrypt')
 
 const router = Router()
 
+const csrf = require('csurf')
+
+const csrfProtection = csrf({ cookie: false })
+
 // Bring in the User Model
 const User = require('../models/user')
 const passport = require('passport')
+const csurf = require('csurf')
 
 // Register Form (GET)
 router.get('/register',(req,res) => {
@@ -82,7 +87,7 @@ router.post('/login',(req,res,next) => {
 })
 
 // Logout (GET)
-router.post('/logout',(req,res) => {
+router.post('/logout',csrfProtection,(req,res) => {
     req.logout()
     req.flash('success','You are logged out')
     res.redirect('/users/login')

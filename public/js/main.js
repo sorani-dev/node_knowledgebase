@@ -7,10 +7,13 @@ document.querySelectorAll('.delete-article').forEach(article => {
             const id = e.target.getAttribute('data-id')
             const request = async () => {
                 try {
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     const response = await fetch(`/articles/${id}`,{
                         method: 'DELETE',
+                        credentials: 'same-origin',
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'CSRF-Token': token // <-- is the csrf token as a header
                         }
                     });
                     const data = await response.json();

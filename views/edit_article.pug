@@ -2,7 +2,8 @@ extends layout
 
 block content
     h1 #{title}
-    form(action=`/articles/edit/${article._id}`, method="post") 
+    form(action=`/articles/edit/${article._id}`, method="post")
+        input(type="hidden", name="_csrf", value=csrfToken)
         .mb-3 
             label.form-label(for="title") Title 
             input.form-control#title(name="title", type="text", value=article.title)
