@@ -3,6 +3,9 @@ const path = require('path')
 const express = require('express')
 const passport = require('passport')
 const session = require('express-session');
+const helmet = require('helmet')
+const MongoStore = require('connect-mongo');
+
 const mongoose = require('mongoose')
 
 const config = require('./config/database')
@@ -35,14 +38,32 @@ app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(express.json())
 
+// Helmet protection
+app.use(helmet())
+
 // Express Session Middleware
 app.set('trust proxy', 1) // trust first proxy
+const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 const sess = {
+    name: 'sessionId',
     secret: 'keyboard cat',
     resave: true,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        //     domain: 'localhost:5000',
+        //     path: '/',
+        //     expires: expiryDate
+    },
+    store: MongoStore.create({
+        client: db.getClient(),
+        // stringify: false,
+        // autoRemove: 'interval',
+        // autoRemoveInterval: 1
+    }),
 }
+
 if (app.get('env') === 'production') {
     app.set('trust proxy', 1) // trust first proxy
     sess.cookie.secure = true // serve secure cookies

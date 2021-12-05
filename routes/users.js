@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { body,check,validationResult } = require('express-validator')
+const { body, check, validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
 
 const router = Router()
@@ -14,30 +14,30 @@ const passport = require('passport')
 const csurf = require('csurf')
 
 // Register Form (GET)
-router.get('/register',(req,res) => {
+router.get('/register', (req, res) => {
     res.render('register')
 })
 
 // Register Submit (POST)
 router.post('/register'
-    ,check('name','Name is Required').notEmpty()
-    ,check('username','Username is Required').notEmpty()
-    ,check('email','Email is Required').notEmpty()
-    ,body('email','Please enter a valid email').isEmail()
-    ,check('password','Password is Required').notEmpty()
-    ,body('password2','Password do not match').custom((value,{ req }) => {
+    , check('name', 'Name is Required').notEmpty()
+    , check('username', 'Username is Required').notEmpty()
+    , check('email', 'Email is Required').notEmpty()
+    , body('email', 'Please enter a valid email').isEmail()
+    , check('password', 'Password is Required').notEmpty()
+    , body('password2', 'Password do not match').custom((value, { req }) => {
         return (value === req.body.password);
     })
-    ,(req,res) => {
+    , (req, res) => {
 
         // Get form data
-        const { name,username,email,password,password2 } = req.body
+        const { name, username, email, password, password2 } = req.body
 
         // Check if any error found
         const errors = validationResult(req)
         console.log(errors)
         if (!errors.isEmpty()) {
-            return res.render('register',{
+            return res.render('register', {
                 errors: errors.array(),
                 name,
                 username,
@@ -52,15 +52,15 @@ router.post('/register'
             password
         })
 
-        bcrypt.genSalt(12,function (err,salt) {
-            bcrypt.hash(password,salt).then(hash => {
+        bcrypt.genSalt(12, function (err, salt) {
+            bcrypt.hash(password, salt).then(hash => {
                 newUser.password = hash
                 newUser.save(err => {
                     if (err) {
                         console.error(err);
                         return
                     }
-                    req.flash('success','You are now registered and can log in.')
+                    req.flash('success', 'You are now registered and can log in.')
                     res.redirect('/users/login')
                 })
             })
@@ -73,23 +73,23 @@ router.post('/register'
 
 
 // Login Form (GET)
-router.get('/login',(req,res) => {
-    return res.render('login',{ username: req.body.username })
+router.get('/login', (req, res) => {
+    return res.render('login', { username: req.body.username })
 })
 
 // Login Process (POST)
-router.post('/login',(req,res,next) => {
-    passport.authenticate('local',{
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', {
         successRedirect: '/'
-        ,failureRedirect: '/users/login'
-        ,failureFlash: true,
-    })(req,res,next)
+        , failureRedirect: '/users/login'
+        , failureFlash: true,
+    })(req, res, next)
 })
 
 // Logout (GET)
-router.post('/logout',csrfProtection,(req,res) => {
+router.post('/logout', (req, res) => {
     req.logout()
-    req.flash('success','You are logged out')
+    req.flash('success', 'You are logged out')
     res.redirect('/users/login')
 })
 

@@ -26,7 +26,7 @@ html(lang="en")
                         if user
                             li.nav-item
                                 form.form-inline(action="/users/logout", method="post")
-                                    input(type="hidden", name="_csrf", value=csrfToken)
+                                    //- input(type="hidden", name="_csrf", value=csrfToken)
                                     button.btn.btn-outline-secondary.text-white(type="submit") Logout
                         else
                             li.nav-item
