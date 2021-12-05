@@ -1,11 +1,8 @@
 const path = require('path')
 
-const bodyParser = require('body-parser')
 const express = require('express')
 const passport = require('passport')
 const session = require('express-session');
-const flash = require('connect-flash')
-const { body,validationResult } = require('express-validator');
 const mongoose = require('mongoose')
 
 const config = require('./config/database')
@@ -15,12 +12,12 @@ mongoose.connect(config.database);
 const db = mongoose.connection;
 
 // Check connection
-db.once('open',function () {
+db.once('open', function () {
     console.log('Connected to MongoDB');
 })
 
 // Check for db errors
-db.on('error',function (err) {
+db.on('error', function (err) {
     console.log(err);
 })
 
@@ -28,8 +25,8 @@ db.on('error',function (err) {
 const app = express()
 
 // Load View Engine
-app.set('views',path.join(__dirname,'views'))
-app.set('view engine','pug')
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'pug')
 
 // Body Parser Middleware
 // parse application/x-www-form-urlencoded
@@ -39,7 +36,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
 // Express Session Middleware
-app.set('trust proxy',1) // trust first proxy
+app.set('trust proxy', 1) // trust first proxy
 const sess = {
     secret: 'keyboard cat',
     resave: true,
@@ -47,22 +44,22 @@ const sess = {
     cookie: { secure: false }
 }
 if (app.get('env') === 'production') {
-    app.set('trust proxy',1) // trust first proxy
+    app.set('trust proxy', 1) // trust first proxy
     sess.cookie.secure = true // serve secure cookies
 }
 app.use(session(sess))
 
 // Express Messages Middleware
 app.use(require('connect-flash')());
-app.use(function (req,res,next) {
-    res.locals.messages = require('express-messages')(req,res);
+app.use(function (req, res, next) {
+    res.locals.messages = require('express-messages')(req, res);
     next();
 });
 
 
 
 // Set Public folder
-app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Passport config
 require('./config/passport')(passport)
@@ -73,9 +70,9 @@ app.use(passport.session())
 // Csrf
 const csrf = require('csurf');
 const csurf = require('csurf');
-const csrfProtection = csrf({ cookie: false,ignoreMethods: ['HEAD','OPTIONS'] })
+const csrfProtection = csrf({ cookie: false, ignoreMethods: ['HEAD', 'OPTIONS'] })
 
-app.use((req,res,next) => {
+app.use((req, res, next) => {
     if (req.isAuthenticated()) {
         console.info('is auth csrf')
         app.use(csrfProtection)
@@ -91,22 +88,22 @@ app.use((req,res,next) => {
 
 // Routes
 // Populate user on all routes if available
-app.get('*',(req,res,next) => {
+app.get('*', (req, res, next) => {
     res.locals.user = req.user || null
     next()
 })
 // Route files
-app.use('/',require('./routes/index'))
-app.use('/articles',require('./routes/articles'))
-app.use('/users',require('./routes/users'))
+app.use('/', require('./routes/index'))
+app.use('/articles', require('./routes/articles'))
+app.use('/users', require('./routes/users'))
 
 // Error handlers
-app.use(function (req,res,next) {
+app.use(function (req, res, next) {
     res.status(404);
 
     res.format({
         html: function () {
-            res.render('errors/404',{ url: req.url })
+            res.render('errors/404', { url: req.url })
         },
         json: function () {
             res.json({ error: 'Not found' })
@@ -116,7 +113,7 @@ app.use(function (req,res,next) {
         }
     })
 })
-app.use(function (err,req,res,next) {
+app.use(function (err, req, res, next) {
     if (err.code !== 'EBADCSRFTOKEN') return next(err)
 
     // handle CSRF token errors here
@@ -126,4 +123,4 @@ app.use(function (err,req,res,next) {
 
 const PORT = process.env.PORT || 5000
 
-app.listen(PORT,() => console.log(`Server started on port ${PORT}`))
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
