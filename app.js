@@ -97,10 +97,11 @@ const csrfProtection = csrf({ cookie: false, ignoreMethods: ['HEAD', 'OPTIONS'] 
 const mongoSanitize = require('express-mongo-sanitize')
 app.use(mongoSanitize({ replaceWith: '_', onSanitize: ({ req, key }) => console.warn(`This request[${key}] is sanitized`, req); }))
 
-// HTTP Middleware
+// HPP Middleware
 const hpp = require('hpp')
 app.use(hpp())
 
+// Auth & csrf middleware 
 app.use((req, res, next) => {
     if (req.isAuthenticated()) {
         console.info('is auth csrf')
@@ -112,7 +113,8 @@ app.use((req, res, next) => {
     }
     return next()
 })
-// // Bring in the Models
+
+// Bring in the Models
 // const Article = require('./models/article');
 
 // Routes
@@ -121,12 +123,14 @@ app.get('*', (req, res, next) => {
     res.locals.user = req.user || null
     next()
 })
+
 // Route files
 app.use('/', require('./routes/index'))
 app.use('/articles', require('./routes/articles'))
 app.use('/users', require('./routes/users'))
 
 // Error handlers
+// 404 Not Found
 app.use(function (req, res, next) {
     res.status(404);
 
@@ -142,12 +146,25 @@ app.use(function (req, res, next) {
         }
     })
 })
+// Token error
 app.use(function (err, req, res, next) {
     if (err.code !== 'EBADCSRFTOKEN') return next(err)
 
     // handle CSRF token errors here
     res.status(403)
-    res.send('form tampered with')
+    if (res.)
+        res.format({
+            html: function () {
+                res.render('errors/404', { message: 'Form tampered with' })
+            },
+            json: function () {
+                res.json({ error: 'Form tampered with' })
+            },
+            default: function () {
+                res.type('txt').send('Form tampered with')
+            }
+        })
+            ('form tampered with')
 })
 
 const PORT = process.env.PORT || 5000
