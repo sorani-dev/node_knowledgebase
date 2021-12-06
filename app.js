@@ -43,7 +43,9 @@ app.use(helmet())
 
 // Express Session Middleware
 app.set('trust proxy', 1) // trust first proxy
+
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+// Configuration
 const sess = {
     name: 'sessionId',
     secret: 'keyboard cat',
@@ -54,7 +56,7 @@ const sess = {
         httpOnly: true,
         //     domain: 'localhost:5000',
         //     path: '/',
-        //     expires: expiryDate
+        expires: expiryDate
     },
     store: MongoStore.create({
         client: db.getClient(),
@@ -67,6 +69,9 @@ const sess = {
 if (app.get('env') === 'production') {
     app.set('trust proxy', 1) // trust first proxy
     sess.cookie.secure = true // serve secure cookies
+    sess.saveUninitialized = false
+    sess.resave = false
+    console.log('is prod')
 }
 app.use(session(sess))
 
@@ -166,5 +171,7 @@ app.use(function (err, req, res, next) {
 })
 
 const PORT = process.env.PORT || 5000
+
+console.info(process.env)
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
