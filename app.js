@@ -97,6 +97,10 @@ const csrfProtection = csrf({ cookie: false, ignoreMethods: ['HEAD', 'OPTIONS'] 
 const mongoSanitize = require('express-mongo-sanitize')
 app.use(mongoSanitize({ replaceWith: '_', onSanitize: ({ req, key }) => console.warn(`This request[${key}] is sanitized`, req); }))
 
+// HTTP Middleware
+const hpp = require('hpp')
+app.use(hpp())
+
 app.use((req, res, next) => {
     if (req.isAuthenticated()) {
         console.info('is auth csrf')
