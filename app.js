@@ -95,7 +95,7 @@ const csrfProtection = csrf({ cookie: false, ignoreMethods: ['HEAD', 'OPTIONS'] 
 
 // Mongo Sanitize Middleware
 const mongoSanitize = require('express-mongo-sanitize')
-app.use(mongoSanitize({ replaceWith: '_', onSanitize: ({ req, key }) => console.warn(`This request[${key}] is sanitized`, req); }))
+app.use(mongoSanitize({ replaceWith: '_', onSanitize: ({ req, key }) => console.warn(`This request[${key}] is sanitized`, req) }))
 
 // HPP Middleware
 const hpp = require('hpp')
@@ -152,19 +152,17 @@ app.use(function (err, req, res, next) {
 
     // handle CSRF token errors here
     res.status(403)
-    if (res.)
-        res.format({
-            html: function () {
-                res.render('errors/404', { message: 'Form tampered with' })
-            },
-            json: function () {
-                res.json({ error: 'Form tampered with' })
-            },
-            default: function () {
-                res.type('txt').send('Form tampered with')
-            }
-        })
-            ('form tampered with')
+    res.format({
+        html: function () {
+            res.render('errors/404', { message: 'Form tampered with' })
+        },
+        json: function () {
+            res.json({ error: 'Form tampered with' })
+        },
+        default: function () {
+            res.type('txt').send('Form tampered with')
+        }
+    })
 })
 
 const PORT = process.env.PORT || 5000
