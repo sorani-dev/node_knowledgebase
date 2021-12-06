@@ -93,6 +93,10 @@ const csrf = require('csurf');
 const csurf = require('csurf');
 const csrfProtection = csrf({ cookie: false, ignoreMethods: ['HEAD', 'OPTIONS'] })
 
+// Mongo Sanitize Middleware
+const mongoSanitize = require('express-mongo-sanitize')
+app.use(mongoSanitize({ replaceWith: '_', onSanitize: ({ req, key }) => console.warn(`This request[${key}] is sanitized`, req); }))
+
 app.use((req, res, next) => {
     if (req.isAuthenticated()) {
         console.info('is auth csrf')
